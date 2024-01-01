@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const ServiceCard = ({ item, index }) => {
     const { name, desc, bgColor, textColor } = item;
     return (
-        <div className='py-[30px] px-3 lg:px-5'>
+        <div className='py-[30px] px-3 lg:px-5 border-gray-500 shadow-lg'>
             <h2 className='text-[26px] leading-9 text-headingColor font-[700]'>
                 {name}
             </h2>
