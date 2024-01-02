@@ -50,7 +50,7 @@ const Login = () => {
         payload: {
           user: res.data,
           token: res.token,
-          role: res.role
+          role: res.data.role
         }
       })
     } catch (error) {

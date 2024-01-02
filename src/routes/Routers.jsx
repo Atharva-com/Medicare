@@ -6,6 +6,9 @@ import Login from '../pages/Login'
 import Signup from '../pages/Signup'
 import Contact from '../pages/Contact'
 import Services from '../pages/Services'
+import MyAccount from '../Dashboard/user-account/MyAccount'
+import Dasboard from '../Dashboard/doctor-account/Dasboard'
+import ProtectedRoute from './ProtectedRoute'
 
 const Routers = () => {
   return (
@@ -17,6 +20,8 @@ const Routers = () => {
       <Route path='/register' element= {<Signup />} />
       <Route path='/contact' element= {<Contact />} />
       <Route path='/services' element= {<Services />} />
+      <Route path='/users/profile/me' element= {<ProtectedRoute allowedRoles={['patient']}><MyAccount /></ProtectedRoute>} />
+      <Route path='/doctors/profile/me' element= {<ProtectedRoute allowedRoles={['doctor']}><Dasboard /></ProtectedRoute>} />
     </Routes>
   )
 }
