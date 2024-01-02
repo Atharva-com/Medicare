@@ -1,7 +1,15 @@
-import { useState } from "react"
-import { Link } from 'react-router-dom'
+import { useContext, useState } from "react"
+import { Link, useNavigate } from 'react-router-dom'
+import { BASE_URL } from '../utils/config'
+import { toast } from 'react-toastify'
+import HashLoader from "react-spinners/HashLoader";
+import { authContext } from "../context/AuthContext";
+
 const Login = () => {
 
+  const navigate = useNavigate()
+  const { dispatch } = useContext(authContext)
+  const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -14,6 +22,48 @@ const Login = () => {
     })
   }
 
+  const submitHandler = async (e) => {
+    e.preventDefault()
+    setIsLoading(true)
+    try {
+      const response = await fetch(`${BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+
+      const res = await response.json()
+      console.log(res)
+      if (res.success === false) {
+        toast.error(res.message)
+        setIsLoading(false)
+      } else {
+        navigate('/')
+        toast.success(res.message)
+        setIsLoading(false)
+      }
+
+      dispatch({
+        type: 'LOGIN_SUCCESS',
+        payload: {
+          user: res.data,
+          token: res.token,
+          role: res.role
+        }
+      })
+    } catch (error) {
+      toast.error("Something went wrong!")
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+      setFormData({
+        email: '',
+        password: '',
+      })
+    }
+  }
 
   return (
     <section className="px-5 lg:px-0">
@@ -23,7 +73,7 @@ const Login = () => {
           Hello! <span className="text-primaryColor">Welcome</span> Back
         </h3>
 
-        <form className="py-4 md:py-0">
+        <form className="py-4 md:py-0" onSubmit={submitHandler}>
           <div className="mb-5">
             <input
               type="email"
@@ -49,7 +99,7 @@ const Login = () => {
           </div>
 
           <div className="mt-7">
-            <button className="w-full bg-primaryColor text-white text-[18px] leading-[30px] rounded-lg px-4 py-3" type="submit">Login</button>
+            <button disabled={isLoading && true} className="w-full bg-primaryColor text-white text-[18px] leading-[30px] rounded-lg px-4 py-3" type="submit">{isLoading ? <HashLoader size={33} color="#ffffff" /> : 'Login'}</button>
           </div>
 
           <p className="mt-5 text-textColor text-center">

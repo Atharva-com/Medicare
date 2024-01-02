@@ -3,11 +3,12 @@ import { useState } from "react"
 import SignupImg from '../assets/images/signup.gif'
 import uploadImageToCloudinary from '../utils/uploadCloudinary'
 import { BASE_URL } from '../utils/config'
-import { toast } from 'react-toastify'
 import HashLoader from "react-spinners/HashLoader";
+import { toast } from 'react-toastify'
 
 const Signup = () => {
   const navigate = useNavigate()
+
   const [selectedFile, setSelectedFile] = useState(null)
   const [previewURl, setPreviewURl] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -31,7 +32,6 @@ const Signup = () => {
     const file = e.target.files[0]
 
     const data = await uploadImageToCloudinary(file)
-    console.log(data)
     setPreviewURl(data.url)
     setSelectedFile(data.url)
     setFormData({
@@ -44,7 +44,7 @@ const Signup = () => {
     e.preventDefault()
     setIsLoading(true)
     try {
-      const res = await fetch(`${BASE_URL}/auth/register`, {
+      const response = await fetch(`${BASE_URL}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -52,22 +52,33 @@ const Signup = () => {
         body: JSON.stringify(formData)
       })
 
-      const { message } = res.json()
+      const res = await response.json()
+      console.log(res)
       if (res.success === false) {
-        toast.error(message)
+        toast.error(res.message)
         setIsLoading(false)
       } else {
-        navigate('/login')
-        toast.success(message)
+        toast.success(res.message)
         setIsLoading(false)
+        navigate('/login')
       }
     } catch (error) {
       toast.error("Something went wrong!")
       console.log(error)
     } finally {
       setIsLoading(false)
+      setFormData({
+        name: '',
+        email: '',
+        password: '',
+        photo: null,
+        gender: '',
+        role: 'patient',
+      })
+      setSelectedFile(null)
     }
   }
+
   return (
     <section className="px-5 xl:px-8">
       <div className="max-w-[1170px] mx-auto">
@@ -162,8 +173,8 @@ const Signup = () => {
               </div>
 
               <div className="mt-7">
-                <button  disabled={isLoading && true}
-                className="w-full bg-primaryColor text-white text-[18px] leading-[30px] rounded-lg px-4 py-3" type="submit">{isLoading ? <HashLoader size={33} color='#ffffff' /> : 'Sign up'}</button>
+                <button disabled={isLoading && true}
+                  className="w-full bg-primaryColor text-white text-[18px] leading-[30px] rounded-lg px-4 py-3" type="submit">{isLoading ? <HashLoader size={33} color='#ffffff' /> : 'Sign up'}</button>
               </div>
 
               <p className="mt-5 text-textColor text-center">
