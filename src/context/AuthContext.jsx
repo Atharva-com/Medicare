@@ -3,7 +3,7 @@ import { createContext, useEffect, useReducer } from "react"
 const initialState = {
     user: localStorage.getItem('user') === undefined ? null : JSON.parse(localStorage.getItem('user')) ,
     token: localStorage.getItem('access_token') || null,
-    role: localStorage.getItem('role') || null,
+    role:  (localStorage.getItem('role')).replace(/"/g, '') || null,
 }
 
 export const authContext = createContext(initialState)
@@ -33,6 +33,7 @@ const authReducer = (state, action) => {
             }
 
         default:
+            console.log(state)
             return state;
     }
 }
@@ -40,12 +41,13 @@ const authReducer = (state, action) => {
 export const AuthContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(authReducer, initialState)
     useEffect(() => {
-        const currentUser = localStorage.setItem('user', JSON.stringify(state.user))
-        const currentUserToken = localStorage.setItem('access_token', JSON.stringify(state.token))
-        const currentUserRole = localStorage.setItem('role', JSON.stringify(state.role))
-        state.user = currentUser
-        state.token = currentUserToken
-        state.role = currentUserRole
+        localStorage.setItem('user', JSON.stringify(state.user))
+        localStorage.setItem('access_token', state.token)
+        localStorage.setItem('role', state.role)
+        // state.user = currentUser
+        // state.token = currentUserToken
+        // state.role = currentUserRole
+        console.log(state)
     }, [state])
 
     return (
