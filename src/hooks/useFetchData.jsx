@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react'
-import { BASE_URL, token } from '../utils/config'
-import { toast } from 'react-toastify'
+import { token } from '../utils/config'
 
 const UseFetchData = (url) => {
-    console.log(token)
     const [data, setData] = useState([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -12,7 +10,7 @@ const UseFetchData = (url) => {
         const fetchData = async () => {
             setLoading(true)
             try {
-                const res = await fetch(`${BASE_URL}/users/profile/me`, {
+                const res = await fetch(url, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
